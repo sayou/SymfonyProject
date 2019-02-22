@@ -1,0 +1,4 @@
+services:
+#    sqli_saad_platform.example:
+#        class: SqliSaad\PlatformBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
