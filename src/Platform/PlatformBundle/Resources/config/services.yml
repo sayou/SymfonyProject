@@ -17,3 +17,8 @@ services:
             - "@platform_platform.application_mailer"
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+    platform_platform.validator.antiflood:
+        class: Platform\PlatformBundle\Validator\AntifloodValidator
+        arguments: ["@request_stack", "@doctrine.orm.entity_manager"]
+        tags:
+            - {name: validator.constraint_validator, alias: platform_platform_antiflood }

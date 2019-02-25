@@ -12,8 +12,14 @@
   <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
   <div class="well">
+  <img
+    src="{{ asset(advert.image.webPath) }}"
+    alt="{{ advert.image.alt }}"
+  />
     {{ advert.content }}
   </div>
+
+  
 
   <p>
     <a href="{{ path('platform_platform_homepage') }}" class="btn btn-default">

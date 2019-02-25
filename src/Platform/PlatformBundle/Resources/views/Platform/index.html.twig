@@ -23,7 +23,12 @@
       <li>Pas (encore !) d'annonces</li>
     {% endfor %}
 
-    
+    <ul class="pagination">
+    {% for tPage in 1..total_page %}
+      <li><a href="{{ path('platform_platform_homepage', {'page': tPage}) }}" {% if tPage == page %}class="active"{% endif %}>{{tPage}}</a></li>
+    {% endfor %}
+    </ul>
+
   </ul>
 
 {% endblock %}

@@ -147,4 +147,59 @@ class AdvertRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function isFlood($ip, $delai){
+
+        return $queryBuilder = $this
+            ->createQueryBuilder('a')
+            ->where('a.ip = :ip')
+                ->setParameter('ip', $ip)
+
+            ->getQuery()
+            ->getResult();
+
+            // $queryBuilder = $this->createQueryBuilder('a')
+            // ->orderBy('a.date','DESC')
+            // ->setMaxResults($limit)
+            // ->getQuery();
+            
+        //return true;
+    }
+
+    public function calculDiffDate($date) {
+
+        $query = $this->_em->createQuery("SELECT a FROM PlatformPlatformBundle:Advert a WHERE a.id > 15");
+        return $query->getSingleResult();
+        //SELECT e FROM AppBundle:Event e WHERE e.datestart > CURRENT_DATE()
+
+        // return $this->findOneBy(array(
+        //     'ip'=>'::1'
+        // ),
+        // array('id'=>'DESC')) ;
+        
+        // return $this->createQueryBuilder('a')
+        //     ->where('')
+        //     ->getQuery()
+        //     ->getResult();
+        // $queryBuilder = $this->_em->createBuilder()
+        //     ->select('a')
+        //     ->form($this->_entityName,'a')
+
+        // return $queryBuilder = $this->createQuery('SELECT e FROM PlatformPlatformBundle:Advert e WHERE e.ip > "'.'::1'.'"');
+        
+        /*$qb = $entityManager->createQueryBuilder();
+        $qb->select('count(account.id)');
+        $qb->from('PlatformPlatformBundle:Advert','account');*/
+
+        //return $count = $qb->getQuery()->getSingleScalarResult();
+        //return = $this->createQueryBuilder('a')->expr()->gte("a.date", "DATE_SUB(a.startDate, 7, 'day')")
+        // return $this->getEntityManager()->findOneBy(
+        //     array('id' => 'DESC')
+        // );
+       // return $query =$this->_em->createQuery('select a, DATE_DIFF(CURRENT_DATE(), a.date) as days from PlatformPlatformBundle:Advert WHERE a.ip = "'.'::1'.'"');
+       /*$query = $this->_em->createQuery("SELECT TimeDiff(CURRENT_DATE(), a.date) FROM PlatformPlatformBundle:Advert a WHERE a.ip = :ip");
+       $query->setParameter('ip','::1');*/
+
+       return $query->getSingleResult();
+    }
 }

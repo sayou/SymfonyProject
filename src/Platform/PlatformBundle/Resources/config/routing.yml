@@ -24,7 +24,7 @@ Platform_edit:
 
 Platform_delete:
     path:     /delete/{id}
-    defaults: { _contoller: PlatformPlatformBundle:Platform:delete }
+    defaults: { _controller: PlatformPlatformBundle:Platform:delete }
     requirements:
         id: \d*
 

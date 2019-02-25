@@ -3,18 +3,21 @@
 namespace Platform\PlatformBundle\Controller;
 
 use Platform\PlatformBundle\Entity\Advert;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Platform\PlatformBundle\Form\AdvertType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type;
+use Platform\PlatformBundle\Form\AdvertEditType;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Platform\PlatformBundle\Form\AdvertType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlatformController extends Controller{
 
@@ -29,8 +32,9 @@ class PlatformController extends Controller{
             ->getAdverts($page,2);
         
         $total_page = ceil(count($listAdverts) / 2);
+        
         //$listAdverts->getIterator()->count() nombre date in page
-        if($total_page < $page){
+        if($total_page < $page && $total_page != 0){
             throw new NotFoundHttpException("Page $page not found !!");
         }
         // if(!$listAdverts || empty($listAdverts)){
@@ -76,44 +80,59 @@ class PlatformController extends Controller{
     }
 
     public function addAction(Request $request){
-        $advert = new Advert();
+        $em = $this->getDoctrine()->getManager();
 
-        $advert->setAuthor('Saad YOUSFI');
+        $advert = $em->getRepository('PlatformPlatformBundle:Advert')
+            ->calculDiffDate('::1',15);
+        
+        var_dump($advert);
+        // $advert = new Advert();
+
+        // $advert->setAuthor('Saad YOUSFI');
 
 
-        $form= $this->get('form.factory')->create(AdvertType::class, $advert);
+        // $form= $this->get('form.factory')->create(AdvertType::class, $advert);
 
-        // $formBuilder
-        //     ->add('date', DateType::class)
-        //     ->add('title', TextType::class)
-        //     ->add('content', TextareaType::class)
-        //     ->add('author', TextType::class)
-        //     ->add('published', CheckboxType::class, array('required'=>false))
-        //     ->add('save', SubmitType::class);
+        // // $formBuilder
+        // //     ->add('date', DateType::class)
+        // //     ->add('title', TextType::class)
+        // //     ->add('content', TextareaType::class)
+        // //     ->add('author', TextType::class)
+        // //     ->add('published', CheckboxType::class, array('required'=>false))
+        // //     ->add('save', SubmitType::class);
 
-        // $form = $formBuilder->getForm();
+        // // $form = $formBuilder->getForm();
 
-        if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-            //$form->handleRequest($request);
+        // if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
+        //     //$form->handleRequest($request);
 
-            if($form->isValid()){
-                $em = $this->getDoctrine()->getManager();
+        //     // if($form->isValid()){
+        //     //$advert->getImage()->upload();
 
-                $em->persist($advert);
+        //     $em = $this->getDoctrine()->getManager();
+            
+            
+        //     $requestStack = new RequestStack();
+            
+        //     $advert->setIp($request->getClientIp());
+        //     $em->persist($advert);
+        //     //$request = $requestStack->getCurrentRequest();
+        //     //var_dump($request);
+            
+        //     //$advert->setIp();
+        //     $em->flush();
 
-                $em->flush();
+        //     $request->getSession()->getFlashBag()->add('notice','advert saved with success');
+        //     return $this->redirectToRoute('platform_annonce',array('id'=>$advert->getId()));
+        //     // }else{
+        //     //     throw new NotFoundHttpException('Ooops something wrong');
+        //     // }
+        // }
 
-                $request->getSession()->getFlashBag()->add('notice','advert saved with success');
-
-                return $this->redirectToRoute('platform_annonce',array('id'=>$advert->getId()));
-            }else{
-                throw new NotFoundHttpException('Ooops something wrong');
-            }
-        }
-
-        return $this->render('PlatformPlatformBundle:Platform:add.html.twig',array(
-            'form'=>$form->createView()
-        ));
+        // return $this->render('PlatformPlatformBundle:Platform:add.html.twig',array(
+        //     'form'=>$form->createView(),
+        //     'title' => "Add advert"
+        // ));
 
     }
 
@@ -125,21 +144,69 @@ class PlatformController extends Controller{
             ->getRepository('PlatformPlatformBundle:Advert')
             ->find($id);
 
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
+        $form= $this->get('form.factory')->create(AdvertEditType::class, $advert);
+        // $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $advert);
 
-        $formBuilder
-            ->add('date', DateType::class)
-            ->add('title', TextType::class)
-            ->add('content', TextareaType::class)
-            ->add('author', TextType::class)
-            ->add('published', CheckboxType::class, array('required'=>false))
-            ->add('save', SubmitType::class);
+        // $formBuilder
+        //     ->add('date', DateType::class)
+        //     ->add('title', TextType::class)
+        //     ->add('content', TextareaType::class)
+        //     ->add('author', TextType::class)
+        //     ->add('published', CheckboxType::class, array('required'=>false))
+        //     ->add('save', SubmitType::class);
 
-        $form = $formBuilder->getForm();
+        // $form = $formBuilder->getForm();
 
-        return $this->render('PlatformPlatformBundle:Platform:edit.html.twig',array(
-            'form'=>$form->createView()
+        return $this->render('PlatformPlatformBundle:Platform:add.html.twig',array(
+            'form'=>$form->createView(),
+            'title' => "Edit advert Number $id"
         ));
+    }
+
+    public function deleteAction($id, Request $request){
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $advert = $em->getRepository('PlatformPlatformBundle:Advert')->find($id);
+        
+        if(null === $advert){
+            throw new NotFoundHttpException('Ooops this advert not found');
+        }
+
+        $form = $this->get('form.factory')->create();
+
+        if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
+            $em->remove($advert);
+            $em->flush();
+
+            $request->getSession()->getFlashBag()->add('info',"The advert deleted with success");
+
+            return $this->redirectToRoute('platform_platform_homepage');
+        }
+
+        return $this->render('PlatformPlatformBundle:Platform:delete.html.twig',array(
+            'advert' => $advert,
+            'form' => $form->createView()
+        ));
+    }
+
+    public function testAction(){
+        $advert = new Advert();
+
+        $advert->setDate(new \DateTime());
+        $advert->setTitle('1234567890');
+        $advert->setAuthor('As');
+        $advert->setContent('g');
+
+        $validator = $this->get('validator');
+
+        $listErrors = $validator->validate($advert);
+
+        if(count($listErrors) > 0){
+            return new Response(var_dump($listErrors));
+        }else{
+            return new Response('Your forms data are validated');
+        }
     }
 
 }

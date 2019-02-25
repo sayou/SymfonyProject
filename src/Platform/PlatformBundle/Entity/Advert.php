@@ -3,16 +3,22 @@
 namespace Platform\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Gedmo\Mapping\Annotation as Gedmo;
+use Platform\PlatformBundle\Validator\Antiflood;
 
 use \Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Advert
  *
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="Platform\PlatformBundle\Repository\AdvertRepository")
+ * @UniqueEntity(fields="title", message="Une annonce existe déjà avec ce titre.")
  */
 class Advert
 {
@@ -31,13 +37,18 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @Assert\Length(
+     *      min=10,
+     *      minMessage="Le titre doit faire au moins {{ limit }} caractères."
+     * )
      */
     private $title;
 
@@ -45,6 +56,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="author", type="string", length=255)
+     * @Assert\Length(min=2)
      */
     private $author;
 
@@ -52,6 +64,8 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     * @Assert\NotBlank()
+     * @Antiflood()
      */
     private $content;
 
@@ -63,7 +77,8 @@ class Advert
 
 
     /**
-     * @ORM\OneToOne(targetEntity="Platform\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Platform\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
+     * @Assert\Valid()
      */
     private $image;
 
@@ -92,6 +107,11 @@ class Advert
      * @ORM\Column(name="nb_applications", type="integer")
      */
     private $nbApplications = 0;
+    
+    /**
+     * @ORM\Column(name="ip", type="string", length=255)
+     */
+    private $ip;
 
     public function increaseApplication(){
         $this->nbApplications++;
@@ -411,5 +431,51 @@ class Advert
     public function getNbApplications()
     {
         return $this->nbApplications;
+    }
+
+    // /**
+    //  * @Assert\IsTrue()
+    //  */
+    // public function isTitle(){
+    //     return false;
+    // }
+
+    /**
+     * @Assert\Callback
+     */
+    public function isContentValid(ExecutionContextInterface $context){
+        $forbieddenWords = array('abondon','démotivation');
+
+        if(preg_match('/(?:^|\W)'.implode('|', $forbieddenWords).'(?:$|\W)/', $this->getContent())){
+            $context
+                ->buildViolation('Centenu un valid, car il contient un mot interdit')
+                ->atPath('content')
+                ->addViolation();
+        }
+
+    }
+
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     *
+     * @return Advert
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
     }
 }

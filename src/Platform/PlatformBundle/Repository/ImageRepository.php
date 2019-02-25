@@ -1,6 +1,6 @@
 <?php
 
-namespace Platform\PlatformBundle\Repository;
+namespace Platform\PlatformBundle\Entity;
 
 /**
  * ImageRepository
