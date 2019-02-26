@@ -83,9 +83,9 @@ class PlatformController extends Controller{
         ));
     }
 
-    /**
-     * @Security("has_role('ROLE_AUTEUR')")
-     */
+    // /**
+    //  * @Security("has_role('ROLE_AUTEUR')")
+    //  */
     public function addAction(Request $request){
 
         // if(!$this->get('security.authorization_checker')->isGranted('ROLE_AUTEUR')){
@@ -201,22 +201,42 @@ class PlatformController extends Controller{
     }
 
     public function testAction(){
-        $advert = new Advert();
+        // Pour récupérer le service UserManager du bundle
+        $userManager = $this->get('fos_user.user_manager');
 
-        $advert->setDate(new \DateTime());
-        $advert->setTitle('1234567890');
-        $advert->setAuthor('As');
-        $advert->setContent('g');
+        // Pour récupérer la liste de tous les utilisateurs
+        $users = $userManager->findUsers();
 
-        $validator = $this->get('validator');
+        var_dump($users);
 
-        $listErrors = $validator->validate($advert);
 
-        if(count($listErrors) > 0){
-            return new Response(var_dump($listErrors));
-        }else{
-            return $this->render("PlatformPlatformBundle:Platform:test.html.twig");
-        }
+        // // Pour charger un utilisateur
+        // $user = $userManager->findUserBy(array('username' => 'winzou'));
+
+        // // Pour modifier un utilisateur
+        // $user->setEmail('cetemail@nexiste.pas');
+        // $userManager->updateUser($user); // Pas besoin de faire un flush avec l'EntityManager, cette méthode le fait toute seule !
+
+        // // Pour supprimer un utilisateur
+        // $userManager->deleteUser($user);
+
+
+        // $advert = new Advert();
+
+        // $advert->setDate(new \DateTime());
+        // $advert->setTitle('1234567890');
+        // $advert->setAuthor('As');
+        // $advert->setContent('g');
+
+        // $validator = $this->get('validator');
+
+        // $listErrors = $validator->validate($advert);
+
+        // if(count($listErrors) > 0){
+        //     return new Response(var_dump($listErrors));
+        // }else{
+        //     return $this->render("PlatformPlatformBundle:Platform:test.html.twig");
+        // }
     }
 
 }

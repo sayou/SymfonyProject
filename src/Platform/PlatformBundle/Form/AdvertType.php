@@ -2,21 +2,22 @@
 
 namespace Platform\PlatformBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Platform\PlatformBundle\Repository\CategoryRepository;
-
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\AbstractType;
+use Platform\PlatformBundle\Form\CkeditorType;
+use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Platform\PlatformBundle\Repository\CategoryRepository;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class AdvertType extends AbstractType
 {
@@ -30,7 +31,8 @@ class AdvertType extends AbstractType
             ->add('date', DateTimeType::class)
             ->add('title', TextType::class)
             ->add('author', TextType::class)
-            ->add('content', TextareaType::class)
+            //->add('content', TextareaType::class)
+            ->add('content', CkeditorType::class)
             //->add('published', CheckboxType::class, array('required' => false, 'data' => false))
             ->add('image', ImageType::class)
             // ->add('categories', CollectionType::class, array(

@@ -68,6 +68,15 @@ stof_doctrine_extensions:
         default:
             sluggable: true
 
+#
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: User\OCUserBundle\Entity\User
+    from_email:
+        address: "yourapp@yourapp.com"
+        sender_name: "Demo String"
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: '%mailer_transport%'
@@ -75,3 +84,4 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+

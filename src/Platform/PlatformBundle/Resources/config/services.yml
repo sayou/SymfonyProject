@@ -22,3 +22,15 @@ services:
         arguments: ["@request_stack", "@doctrine.orm.entity_manager"]
         tags:
             - {name: validator.constraint_validator, alias: platform_platform_antiflood }
+    
+    platform_platform.antispam.extension:
+        class: Platform\PlatformBundle\Twig\AntispamExtension
+        arguments: 
+            - "@platform_platform.antispam"
+        tags:
+            - { name: twig.extension }
+
+    platform_platform.form.ckeditor:
+        class: Platform\PlatformBundle\Form\CkeditorType
+        tags:
+            - { name: form.type, alias: ckeditor }
