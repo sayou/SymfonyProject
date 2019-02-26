@@ -17,7 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PlatformController extends Controller{
 
@@ -26,12 +28,14 @@ class PlatformController extends Controller{
             throw new NotFoundHttpException("Page $page not found !!");
         }
 
+        $nbrPerPage = 10;
+
         $listAdverts = $this->getDoctrine()
             ->getManager()
             ->getRepository('PlatformPlatformBundle:Advert')
-            ->getAdverts($page,2);
+            ->getAdverts($page,$nbrPerPage);
         
-        $total_page = ceil(count($listAdverts) / 2);
+        $total_page = ceil(count($listAdverts) / $nbrPerPage);
         
         //$listAdverts->getIterator()->count() nombre date in page
         if($total_page < $page && $total_page != 0){
@@ -79,60 +83,66 @@ class PlatformController extends Controller{
         ));
     }
 
+    /**
+     * @Security("has_role('ROLE_AUTEUR')")
+     */
     public function addAction(Request $request){
+
+        // if(!$this->get('security.authorization_checker')->isGranted('ROLE_AUTEUR')){
+        //     throw new AccessDeniedException('Access autorised for Author !');
+        // }
         $em = $this->getDoctrine()->getManager();
 
-        $advert = $em->getRepository('PlatformPlatformBundle:Advert')
-            ->calculDiffDate('::1',15);
-        
-        var_dump($advert);
-        // $advert = new Advert();
+       
+        //var_dump($advert->getDate());
+        //var_dump($advert);
+        $advert = new Advert();
 
-        // $advert->setAuthor('Saad YOUSFI');
+        $advert->setAuthor('Saad YOUSFI');
 
 
-        // $form= $this->get('form.factory')->create(AdvertType::class, $advert);
+        $form= $this->get('form.factory')->create(AdvertType::class, $advert);
 
-        // // $formBuilder
-        // //     ->add('date', DateType::class)
-        // //     ->add('title', TextType::class)
-        // //     ->add('content', TextareaType::class)
-        // //     ->add('author', TextType::class)
-        // //     ->add('published', CheckboxType::class, array('required'=>false))
-        // //     ->add('save', SubmitType::class);
+        // $formBuilder
+        //     ->add('date', DateType::class)
+        //     ->add('title', TextType::class)
+        //     ->add('content', TextareaType::class)
+        //     ->add('author', TextType::class)
+        //     ->add('published', CheckboxType::class, array('required'=>false))
+        //     ->add('save', SubmitType::class);
 
-        // // $form = $formBuilder->getForm();
+        // $form = $formBuilder->getForm();
 
-        // if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-        //     //$form->handleRequest($request);
+        if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
+            //$form->handleRequest($request);
 
-        //     // if($form->isValid()){
-        //     //$advert->getImage()->upload();
+            // if($form->isValid()){
+            //$advert->getImage()->upload();
 
-        //     $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager();
             
             
-        //     $requestStack = new RequestStack();
+            $requestStack = new RequestStack();
             
-        //     $advert->setIp($request->getClientIp());
-        //     $em->persist($advert);
-        //     //$request = $requestStack->getCurrentRequest();
-        //     //var_dump($request);
+            $advert->setIp($request->getClientIp());
+            $em->persist($advert);
+            //$request = $requestStack->getCurrentRequest();
+            //var_dump($request);
             
-        //     //$advert->setIp();
-        //     $em->flush();
+            //$advert->setIp();
+            $em->flush();
 
-        //     $request->getSession()->getFlashBag()->add('notice','advert saved with success');
-        //     return $this->redirectToRoute('platform_annonce',array('id'=>$advert->getId()));
-        //     // }else{
-        //     //     throw new NotFoundHttpException('Ooops something wrong');
-        //     // }
-        // }
+            $request->getSession()->getFlashBag()->add('notice','advert saved with success');
+            return $this->redirectToRoute('platform_annonce',array('id'=>$advert->getId()));
+            // }else{
+            //     throw new NotFoundHttpException('Ooops something wrong');
+            // }
+        }
 
-        // return $this->render('PlatformPlatformBundle:Platform:add.html.twig',array(
-        //     'form'=>$form->createView(),
-        //     'title' => "Add advert"
-        // ));
+        return $this->render('PlatformPlatformBundle:Platform:add.html.twig',array(
+            'form'=>$form->createView(),
+            'title' => "Add advert"
+        ));
 
     }
 
@@ -205,7 +215,7 @@ class PlatformController extends Controller{
         if(count($listErrors) > 0){
             return new Response(var_dump($listErrors));
         }else{
-            return new Response('Your forms data are validated');
+            return $this->render("PlatformPlatformBundle:Platform:test.html.twig");
         }
     }
 

@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new SqliSaad\PlatformBundle\SqliSaadPlatformBundle(),
             new Platform\PlatformBundle\PlatformPlatformBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new User\OCUserBundle\OCUserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

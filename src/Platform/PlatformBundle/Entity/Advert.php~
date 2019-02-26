@@ -4,13 +4,14 @@ namespace Platform\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use \Doctrine\Common\Collections\ArrayCollection;
-
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 use Platform\PlatformBundle\Validator\Antiflood;
+
+use \Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Advert
@@ -111,6 +112,14 @@ class Advert
      * @ORM\Column(name="ip", type="string", length=255)
      */
     private $ip;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_add", type="datetime")
+     * @Assert\DateTime()
+     */
+    private $dateAdd;
 
     public function increaseApplication(){
         $this->nbApplications++;
@@ -452,5 +461,29 @@ class Advert
                 ->addViolation();
         }
 
+    }
+
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     *
+     * @return Advert
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
     }
 }

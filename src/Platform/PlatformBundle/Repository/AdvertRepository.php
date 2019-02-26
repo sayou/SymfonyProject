@@ -150,26 +150,50 @@ class AdvertRepository extends EntityRepository
 
     public function isFlood($ip, $delai){
 
-        return $queryBuilder = $this
-            ->createQueryBuilder('a')
-            ->where('a.ip = :ip')
-                ->setParameter('ip', $ip)
+        $result = $this->createQueryBuilder('a')
+            ->select('a')
+            ->where('a.ip LIKE :ip')
+                ->setParameter('ip',$ip)
+            ->addOrderBy('a.id','DESC')->setMaxResults(1)->getQuery()->getOneOrNullResult();
 
-            ->getQuery()
-            ->getResult();
+    //     $result = $this->findOneBy(array(
+    //         'ip'=>'::1'
+    //    ),
+    //    array('id'=>'DESC')) ;
 
-            // $queryBuilder = $this->createQueryBuilder('a')
-            // ->orderBy('a.date','DESC')
-            // ->setMaxResults($limit)
-            // ->getQuery();
-            
-        //return true;
+       if($this->calculDiffDate($result,$delai)){return true;}
     }
 
-    public function calculDiffDate($date) {
+    public function calculDiffDate($result, $delai) {
+        $delai = $delai*100;
+        
+        if($result){
+            $date = new \DateTime();
+            $interval = date_diff($date,$result->getDateAdd());
+            $interval = explode(':',$interval->format('%h:%i:%s'));
+            //
+            if($interval[0] == 0 && $interval[1] == 0 && $interval[2] <= 15){
+                return true;
+            }
+            //$interval = $date->getTimestamp() - $result->getDate()->getTimestamp();
+            
+            // if($interval < $delai){
+            //     var_dump($interval);
+            //     return true;
+            // }
+        }
 
-        $query = $this->_em->createQuery("SELECT a FROM PlatformPlatformBundle:Advert a WHERE a.id > 15");
-        return $query->getSingleResult();
+        return false;
+        // $query = $this->_em->createQuery("SELECT a FROM PlatformPlatformBundle:Advert a WHERE a.date < :today")
+        //                 ->setParameter('today', new \DateTime())
+        //                 ->addOrderBy('id','DESC');
+
+        // $query = $this->createQueryBuilder('a')
+        //      //->where('TIMESTAMPDIFF(SECOND, :today, a.date) > 15')
+             
+        //      ->setParameter('today', new \DateTime())
+        //      ->addOrderBy('a.id','DESC');
+        // return $query->getQuery()->getResult();
         //SELECT e FROM AppBundle:Event e WHERE e.datestart > CURRENT_DATE()
 
         // return $this->findOneBy(array(
@@ -200,6 +224,6 @@ class AdvertRepository extends EntityRepository
        /*$query = $this->_em->createQuery("SELECT TimeDiff(CURRENT_DATE(), a.date) FROM PlatformPlatformBundle:Advert a WHERE a.ip = :ip");
        $query->setParameter('ip','::1');*/
 
-       return $query->getSingleResult();
+       //return $query->getSingleResult();
     }
 }

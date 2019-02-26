@@ -12,8 +12,6 @@
   {# Les erreurs générales du formulaire. #}
   {{ form_errors(form) }}
 
-  {# Génération du label + error + widget pour un champ. #}
-  {{ form_row(form.date) }}
 
   {# Génération manuelle et éclatée : #}
   <div class="form-group">
@@ -39,7 +37,6 @@
   </div>
 
   {{ form_row(form.author) }}
-  {{ form_row(form.published) }}
 
   {# Pour le bouton, pas de label ni d'erreur, on affiche juste le widget #}
   {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary'}}) }}

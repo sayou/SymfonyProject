@@ -113,6 +113,14 @@ class Advert
      */
     private $ip;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_add", type="datetime")
+     * @Assert\DateTime()
+     */
+    private $dateAdd;
+
     public function increaseApplication(){
         $this->nbApplications++;
     }
@@ -282,6 +290,7 @@ class Advert
         $this->date = new \DateTime();
         $this->categories = new ArrayCollection();
         $this->applications = new ArrayCollection();
+        $this->dateAdd = new \DateTime();
     }
 
     /**
@@ -477,5 +486,29 @@ class Advert
     public function getIp()
     {
         return $this->ip;
+    }
+
+    /**
+     * Set dateAdd
+     *
+     * @param \DateTime $dateAdd
+     *
+     * @return Advert
+     */
+    public function setDateAdd($dateAdd)
+    {
+        $this->dateAdd = $dateAdd;
+
+        return $this;
+    }
+
+    /**
+     * Get dateAdd
+     *
+     * @return \DateTime
+     */
+    public function getDateAdd()
+    {
+        return $this->dateAdd;
     }
 }
